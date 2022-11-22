@@ -17,6 +17,9 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use(usersRouter);
 app.use(cardsRouter);
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'Данной страницы не существует' });
+});
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
