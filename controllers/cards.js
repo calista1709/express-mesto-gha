@@ -1,10 +1,10 @@
 const Card = require('../models/card');
 
-const checkDoesCardExist = (card, res) => {
+const checkDoesCardExist = (card, res, answer) => {
   if (!card) {
     return res.status(404).send({ message: 'Запрашиваемый пост не найден' });
   }
-  return res.status(200).send(card);
+  return res.status(200).send(answer);
 };
 
 module.exports.getAllCards = (req, res) => {
@@ -25,14 +25,16 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then(() => res.status(200).send({ message: 'Пост удален' }))
+    .then((card) => {
+      checkDoesCardExist(card, res, { message: 'Пост удален' });
+    })
     .catch(() => res.status(400).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.addLikeToCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
-      checkDoesCardExist(card, res);
+      checkDoesCardExist(card, res, card);
     })
     .catch(() => res.status(400).send({ message: 'Произошла ошибка' }));
 };
@@ -40,7 +42,7 @@ module.exports.addLikeToCard = (req, res) => {
 module.exports.deleteLikeFromCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
-      checkDoesCardExist(card, res);
+      checkDoesCardExist(card, res, card);
     })
     .catch(() => res.status(400).send({ message: 'Произошла ошибка' }));
 };
