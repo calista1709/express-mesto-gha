@@ -2,6 +2,7 @@ const Card = require('../models/card');
 
 module.exports.getAllCards = (req, res) => {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.status(200).send(cards))
     .catch(() => res.status(404).send({ message: 'Информация не найдена' }));
 };
