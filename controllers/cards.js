@@ -1,7 +1,6 @@
 const Card = require('../models/card');
 
 const checkDoesCardExist = (card, res) => {
-  console.log(card);
   if (!card) {
     return res.status(404).send({ message: 'Запрашиваемый пост не найден' });
   }
