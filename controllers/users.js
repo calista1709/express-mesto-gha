@@ -1,5 +1,12 @@
 const User = require('../models/user');
 
+const checkDoesUserExist = (user, res) => {
+  if (!user) {
+    return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+  }
+  return res.status(200).send(user);
+};
+
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
@@ -8,8 +15,10 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.status(200).send(user))
-    .catch(() => res.status(400).send({ message: 'Запрашиваемый пользователь не найден' }));
+    .then((user) => {
+      checkDoesUserExist(user, res);
+    })
+    .catch(() => res.status(400).send({ message: 'Переданы некорректные данные' }));
 };
 
 module.exports.createUser = (req, res) => {
