@@ -1,20 +1,20 @@
 const Card = require('../models/card');
 const {
-  NOT_FOUND_ERROR_CODE, INCORRECT_DATA_ERROR_CODE, STATUS_OK, STATUS_CREATED,
+  NOT_FOUND_ERROR_CODE, INCORRECT_DATA_ERROR_CODE, STATUS_CREATED, DEFAULT_ERROR_CODE,
 } = require('../utils/constants');
 
 const checkDoesCardExist = (card, res, answer) => {
   if (!card) {
     return res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Запрашиваемый пост не найден' });
   }
-  return res.status(STATUS_OK).send(answer);
+  return res.send(answer);
 };
 
 module.exports.getAllCards = (req, res) => {
   Card.find({})
     .populate(['owner', 'likes'])
-    .then((cards) => res.status(STATUS_OK).send(cards))
-    .catch(() => res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Информация не найдена' }));
+    .then((cards) => res.send(cards))
+    .catch(() => res.status(DEFAULT_ERROR_CODE).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.createCard = (req, res) => {
