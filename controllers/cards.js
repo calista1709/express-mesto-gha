@@ -10,6 +10,20 @@ const checkDoesCardExist = (card, res, answer) => {
   return res.send(answer);
 };
 
+const checkTheCastError = (err, res) => {
+  if (err.name === 'CastError') {
+    return res.status(INCORRECT_DATA_ERROR_CODE).send({ message: 'Невалидный id' });
+  }
+  return res.status(DEFAULT_ERROR_CODE).send({ message: 'Произошла ошибка' });
+};
+
+const checkValidationError = (err, res) => {
+  if (err.name === 'ValidationError') {
+    return res.status(INCORRECT_DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' });
+  }
+  return res.status(DEFAULT_ERROR_CODE).send({ message: 'Произошла ошибка' });
+};
+
 module.exports.getAllCards = (req, res) => {
   Card.find({})
     .populate(['owner', 'likes'])
@@ -23,29 +37,23 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.status(STATUS_CREATED).send(card))
-    .catch(() => res.status(INCORRECT_DATA_ERROR_CODE).send({ message: 'Переданы некорректные данные' }));
+    .catch((err) => checkValidationError(err, res));
 };
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => {
-      checkDoesCardExist(card, res, { message: 'Пост удален' });
-    })
-    .catch(() => res.status(INCORRECT_DATA_ERROR_CODE).send({ message: 'Произошла ошибка' }));
+    .then((card) => checkDoesCardExist(card, res, { message: 'Пост удален' }))
+    .catch((err) => checkTheCastError(err, res));
 };
 
 module.exports.addLikeToCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((card) => {
-      checkDoesCardExist(card, res, card);
-    })
-    .catch(() => res.status(INCORRECT_DATA_ERROR_CODE).send({ message: 'Произошла ошибка' }));
+    .then((card) => checkDoesCardExist(card, res, card))
+    .catch((err) => checkTheCastError(err, res));
 };
 
 module.exports.deleteLikeFromCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((card) => {
-      checkDoesCardExist(card, res, card);
-    })
-    .catch(() => res.status(INCORRECT_DATA_ERROR_CODE).send({ message: 'Произошла ошибка' }));
+    .then((card) => checkDoesCardExist(card, res, card))
+    .catch((err) => checkTheCastError(err, res));
 };
