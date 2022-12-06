@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 const User = require('../models/user');
 const {
   DEFAULT_ERROR_CODE,
   STATUS_CREATED,
+  INCORRECT_DATA_ERROR_CODE,
 } = require('../utils/constants');
 const {
   checkValidationError,
@@ -26,6 +28,11 @@ module.exports.createUser = (req, res) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
+
+  if (!validator.isEmail(email)) {
+    res.status(INCORRECT_DATA_ERROR_CODE).send({ message: 'Неверно указана почта' });
+    return;
+  }
 
   bcrypt.hash(password, 10)
     .then((hash) => {
