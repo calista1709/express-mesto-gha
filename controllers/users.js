@@ -38,10 +38,13 @@ module.exports.createUser = (req, res) => {
     .then((hash) => {
       User.create({
         name, about, avatar, email, password: hash,
-      });
-    })
-    .then((user) => res.status(STATUS_CREATED).send(user))
-    .catch((err) => checkValidationError(err, res));
+      })
+        .then((user) => {
+          console.log(user);
+          res.status(STATUS_CREATED).send(user);
+        })
+        .catch((err) => checkValidationError(err, res));
+    });
 };
 
 module.exports.updateUser = (req, res) => {
