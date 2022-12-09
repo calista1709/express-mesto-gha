@@ -1,10 +1,15 @@
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
 const {
   DEFAULT_ERROR_CODE,
   STATUS_CREATED,
   INCORRECT_DATA_ERROR_CODE,
+  SALT_NUMBER,
+  SECRET_KEY,
+  EXPIRES_IN_VALUE,
 } = require('../utils/constants');
 const {
   checkValidationError,
@@ -34,13 +39,12 @@ module.exports.createUser = (req, res) => {
     return;
   }
 
-  bcrypt.hash(password, 10)
+  bcrypt.hash(password, SALT_NUMBER)
     .then((hash) => {
       User.create({
         name, about, avatar, email, password: hash,
       })
         .then((user) => {
-          console.log(user);
           res.status(STATUS_CREATED).send(user);
         })
         .catch((err) => checkValidationError(err, res));
@@ -61,4 +65,15 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => checkValidationError(err, res));
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: EXPIRES_IN_VALUE });
+      res.send({ token });
+    })
+    .catch((err) => res.status(401).send({ message: err.message }));
 };
