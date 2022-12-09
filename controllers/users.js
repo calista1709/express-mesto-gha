@@ -5,11 +5,15 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   DEFAULT_ERROR_CODE,
+  DEFAULT_ERROR_MESSAGE,
   STATUS_CREATED,
   INCORRECT_DATA_ERROR_CODE,
+  INCORRECT_DATA_MESSAGE,
   SALT_NUMBER,
   SECRET_KEY,
   EXPIRES_IN_VALUE,
+  AUTH_ERROR_CODE,
+  AUTH_ERROR_MESSAGE,
 } = require('../utils/constants');
 const {
   checkValidationError,
@@ -20,11 +24,17 @@ const {
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res.status(DEFAULT_ERROR_CODE).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE }));
 };
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
+    .then((user) => checkDoesDataExist(user, res, user))
+    .catch((err) => checkTheCastError(err, res));
+};
+
+module.exports.getUser = (req, res) => {
+  User.findById(req.user._id)
     .then((user) => checkDoesDataExist(user, res, user))
     .catch((err) => checkTheCastError(err, res));
 };
@@ -35,7 +45,7 @@ module.exports.createUser = (req, res) => {
   } = req.body;
 
   if (!validator.isEmail(email)) {
-    res.status(INCORRECT_DATA_ERROR_CODE).send({ message: 'Неверно указана почта' });
+    res.status(INCORRECT_DATA_ERROR_CODE).send({ message: INCORRECT_DATA_MESSAGE });
     return;
   }
 
@@ -75,5 +85,5 @@ module.exports.login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: EXPIRES_IN_VALUE });
       res.send({ token });
     })
-    .catch((err) => res.status(401).send({ message: err.message }));
+    .catch(() => res.status(AUTH_ERROR_CODE).send({ message: AUTH_ERROR_MESSAGE }));
 };

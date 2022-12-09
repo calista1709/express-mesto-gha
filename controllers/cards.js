@@ -1,7 +1,9 @@
 const Card = require('../models/card');
 const {
   DEFAULT_ERROR_CODE,
+  DEFAULT_ERROR_MESSAGE,
   STATUS_CREATED,
+  DELETE_MESSAGE,
 } = require('../utils/constants');
 const {
   checkValidationError,
@@ -13,7 +15,7 @@ module.exports.getAllCards = (req, res) => {
   Card.find({})
     .populate(['owner', 'likes'])
     .then((cards) => res.send(cards))
-    .catch(() => res.status(DEFAULT_ERROR_CODE).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -27,7 +29,7 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => checkDoesDataExist(card, res, { message: 'Пост удален' }))
+    .then((card) => checkDoesDataExist(card, res, { message: DELETE_MESSAGE }))
     .catch((err) => checkTheCastError(err, res));
 };
 
