@@ -4,6 +4,10 @@ const {
   DEFAULT_ERROR_MESSAGE,
   STATUS_CREATED,
   DELETE_MESSAGE,
+  FORBIDDEN_ERROR_CODE,
+  FORBIDDEN_MESSAGE,
+  NOT_FOUND_ERROR_CODE,
+  NOT_FOUND_DATA_MESSAGE,
 } = require('../utils/constants');
 const {
   checkValidationError,
@@ -28,9 +32,19 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => checkDoesDataExist(card, res, { message: DELETE_MESSAGE }))
-    .catch((err) => checkTheCastError(err, res));
+  // eslint-disable-next-line consistent-return
+  Card.findById(req.params.cardId, (err, card) => {
+    if (err) {
+      return res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
+    }
+    if (!card) {
+      return res.status(NOT_FOUND_ERROR_CODE).send({ message: NOT_FOUND_DATA_MESSAGE });
+    }
+    if (!card.owner._id.equals(req.user._id)) {
+      return res.status(FORBIDDEN_ERROR_CODE).send({ message: FORBIDDEN_MESSAGE });
+    }
+    card.remove(() => res.send({ message: DELETE_MESSAGE }));
+  });
 };
 
 module.exports.addLikeToCard = (req, res) => {

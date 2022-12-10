@@ -13,6 +13,8 @@ const SALT_NUMBER = 10;
 const SECRET_KEY = 'YandexPraktikum';
 const EXPIRES_IN_VALUE = '7d';
 const DELETE_MESSAGE = 'Пост удален';
+const FORBIDDEN_ERROR_CODE = 403;
+const FORBIDDEN_MESSAGE = 'Доступ к данным запрещен';
 
 module.exports = {
   NOT_FOUND_ERROR_CODE,
@@ -30,4 +32,6 @@ module.exports = {
   INCORRECT_DATA_MESSAGE,
   NOT_FOUND_DATA_MESSAGE,
   DELETE_MESSAGE,
+  FORBIDDEN_ERROR_CODE,
+  FORBIDDEN_MESSAGE,
 };
