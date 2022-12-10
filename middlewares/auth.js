@@ -1,12 +1,13 @@
 const jwt = require('jsonwebtoken');
-const { SECRET_KEY, AUTH_ERROR_CODE, AUTH_ERROR_MESSAGE } = require('../utils/constants');
+const { SECRET_KEY, AUTH_ERROR_MESSAGE } = require('../utils/constants');
+const AuthError = require('../errors/auth-error');
 
 // eslint-disable-next-line consistent-return
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res.status(AUTH_ERROR_CODE).send({ message: AUTH_ERROR_MESSAGE });
+    throw new AuthError(AUTH_ERROR_MESSAGE);
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -14,7 +15,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, SECRET_KEY);
   } catch (err) {
-    return res.status(AUTH_ERROR_CODE).send({ message: AUTH_ERROR_MESSAGE });
+    next(new AuthError(AUTH_ERROR_MESSAGE));
   }
 
   req.user = payload;

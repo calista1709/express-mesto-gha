@@ -15,6 +15,7 @@ const EXPIRES_IN_VALUE = '7d';
 const DELETE_MESSAGE = 'Пост удален';
 const FORBIDDEN_ERROR_CODE = 403;
 const FORBIDDEN_MESSAGE = 'Доступ к данным запрещен';
+const CONFLICT_ERROR_MESSAGE = 'Пользователь с такой почтой уже зарегистрирован';
 
 module.exports = {
   NOT_FOUND_ERROR_CODE,
@@ -34,4 +35,5 @@ module.exports = {
   DELETE_MESSAGE,
   FORBIDDEN_ERROR_CODE,
   FORBIDDEN_MESSAGE,
+  CONFLICT_ERROR_MESSAGE,
 };
