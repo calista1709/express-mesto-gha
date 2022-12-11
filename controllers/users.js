@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
-
 const User = require('../models/user');
 const {
   STATUS_CREATED,
@@ -16,7 +15,6 @@ const {
   checkValidationOrCastError,
   checkDoesDataExist,
 } = require('../utils/checkFunctions');
-
 const IncorrectDataError = require('../errors/incorrect-data-error');
 const AuthError = require('../errors/auth-error');
 const ConflictError = require('../errors/conflict-error');
