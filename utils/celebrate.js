@@ -1,4 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
+const { LINK_PATTERN } = require('./constants');
 
 const signInCelebrate = celebrate({
   body: Joi.object().keys({
@@ -11,16 +12,10 @@ const signUpCelebrate = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().pattern(LINK_PATTERN),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
-});
-
-const authCelebrate = celebrate({
-  headers: Joi.object().keys({
-    authorization: Joi.string().required(),
-  }).unknown(true),
 });
 
 const paramsUserIdCelebrate = celebrate({
@@ -38,14 +33,14 @@ const updateUserCelebrate = celebrate({
 
 const updateAvatarCelebrate = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required(),
+    avatar: Joi.string().pattern(LINK_PATTERN),
   }),
 });
 
 const createCardCelebrate = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required(),
+    link: Joi.string().required().pattern(LINK_PATTERN),
   }),
 });
 
@@ -58,7 +53,6 @@ const cardAndOwnerCelebrate = celebrate({
 module.exports = {
   signInCelebrate,
   signUpCelebrate,
-  authCelebrate,
   paramsUserIdCelebrate,
   updateUserCelebrate,
   updateAvatarCelebrate,

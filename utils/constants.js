@@ -16,6 +16,7 @@ const DELETE_MESSAGE = 'Пост удален';
 const FORBIDDEN_ERROR_CODE = 403;
 const FORBIDDEN_MESSAGE = 'Доступ к данным запрещен';
 const CONFLICT_ERROR_MESSAGE = 'Пользователь с такой почтой уже зарегистрирован';
+const LINK_PATTERN = /(https?:\/\/)(w{3}\.)?(((\d{1,3}\.){3}\d{1,3})|((\w-?)+\.(ru|com)))(:\d{2,5})?((\/.+)+)?\/?#?/;
 
 module.exports = {
   NOT_FOUND_ERROR_CODE,
@@ -36,4 +37,5 @@ module.exports = {
   FORBIDDEN_ERROR_CODE,
   FORBIDDEN_MESSAGE,
   CONFLICT_ERROR_MESSAGE,
+  LINK_PATTERN,
 };
