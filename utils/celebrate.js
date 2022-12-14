@@ -20,7 +20,7 @@ const signUpCelebrate = celebrate({
 
 const paramsUserIdCelebrate = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    userId: Joi.string().hex().length(24),
   }),
 });
 
@@ -46,7 +46,7 @@ const createCardCelebrate = celebrate({
 
 const cardAndOwnerCelebrate = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().hex().length(24),
   }),
 });
 
